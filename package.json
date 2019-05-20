@@ -1,0 +1,11 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "start": "cd packages/react-scripts && node bin/react-scripts.js start",
+    "test": "cd packages/react-scripts && node bin/react-scripts.js test"
+  },
+  "devDependencies": {
+    "lerna": "^3.13.4"
+  }
+}
