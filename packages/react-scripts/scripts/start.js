@@ -32,19 +32,22 @@ verifyTypeScriptSetup();
 // @remove-on-eject-end
 
 const fs = require('fs-extra');
-const chalk = require('react-dev-utils/chalk');
 const webpack = require('webpack');
-const WebpackDevServer = require('webpack-dev-server');
 const clearConsole = require('react-dev-utils/clearConsole');
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
-const openBrowser = require('react-dev-utils/openBrowser');
 const paths = require('../config/paths');
 const configFactory = require('../config/webpack.config');
-const useYarn = fs.existsSync(paths.yarnLockFile);
 const isInteractive = process.stdout.isTTY;
 
 // Warn and crash if required files are missing
-if (!checkRequiredFiles([paths.appHtml, paths.appPopupJs, paths.appBackgroundJs, paths.appOptionsJs])) {
+if (
+  !checkRequiredFiles([
+    paths.appHtml,
+    paths.appPopupJs,
+    paths.appBackgroundJs,
+    paths.appOptionsJs,
+  ])
+) {
   process.exit(1);
 }
 
@@ -101,9 +104,9 @@ checkBrowsers(paths.appPath, isInteractive)
     process.exit(1);
   });
 
-  function copyPublicFolder() {
-    fs.copySync(paths.appPublic, paths.appDist, {
-      dereference: true,
-      filter: file => file !== paths.appHtml,
-    });
-  }
+function copyPublicFolder() {
+  fs.copySync(paths.appPublic, paths.appDist, {
+    dereference: true,
+    filter: file => file !== paths.appHtml,
+  });
+}
