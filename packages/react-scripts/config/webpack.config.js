@@ -56,7 +56,6 @@ module.exports = function(webpackEnv) {
 
   // Webpack uses `publicPath` to determine where the app is being served from.
   // It requires a trailing slash, or the file assets will get an incorrect path.
-  // In development, we always serve from the root. This makes config easier.
   const publicPath = '/';
 
   // `publicUrl` is just like `publicPath`, but we will provide it to our app
@@ -459,7 +458,6 @@ module.exports = function(webpackEnv) {
                 'sass-loader'
               ),
             },
-            // "file" loader makes sure those assets get served by WebpackDevServer.
             // When you `import` an asset, you get its (virtual) filename.
             // In production, they would get copied to the `build` folder.
             // This loader doesn't use a "test" so it will catch all modules
@@ -554,7 +552,7 @@ module.exports = function(webpackEnv) {
       // See https://github.com/facebook/create-react-app/issues/240
       isEnvDevelopment && new CaseSensitivePathsPlugin(),
       // If you require a missing module and then `npm install` it, you still have
-      // to restart the development server for Webpack to discover it. This plugin
+      // to restart the development for Webpack to discover it. This plugin
       // makes the discovery automatic so you don't have to restart.
       // See https://github.com/facebook/create-react-app/issues/186
       isEnvDevelopment &&
@@ -605,7 +603,7 @@ module.exports = function(webpackEnv) {
           ],
           watch: paths.appSrc,
           silent: true,
-          // The formatter is invoked directly in WebpackDevServerUtils during development
+          // The formatter is invoked during development
           formatter: isEnvProduction ? typescriptFormatter : undefined,
         }),
     ].filter(Boolean),

@@ -42,6 +42,7 @@ const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const printHostingInstructions = require('react-dev-utils/printHostingInstructions');
 const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
 const printBuildError = require('react-dev-utils/printBuildError');
+const copyPublicFolder = require('./utils/copyPublicFolder');
 
 const measureFileSizesBeforeBuild =
   FileSizeReporter.measureFileSizesBeforeBuild;
@@ -55,7 +56,14 @@ const WARN_AFTER_CHUNK_GZIP_SIZE = 1024 * 1024;
 const isInteractive = process.stdout.isTTY;
 
 // Warn and crash if required files are missing
-if (!checkRequiredFiles([paths.appHtml, paths.appPopupJs, paths.appBackgroundJs, paths.appOptionsJs])) {
+if (
+  !checkRequiredFiles([
+    paths.appHtml,
+    paths.appPopupJs,
+    paths.appBackgroundJs,
+    paths.appOptionsJs,
+  ])
+) {
   process.exit(1);
 }
 
@@ -76,7 +84,7 @@ checkBrowsers(paths.appPath, isInteractive)
     // if you're in it, you don't end up in Trash
     fs.emptyDirSync(paths.appBuild);
     // Merge with the public folder
-    copyPublicFolder();
+    copyPublicFolder(paths.appBuild);
     // Start the webpack build
     return build(previousFileSizes);
   })
@@ -196,12 +204,5 @@ function build(previousFileSizes) {
         warnings: messages.warnings,
       });
     });
-  });
-}
-
-function copyPublicFolder() {
-  fs.copySync(paths.appPublic, paths.appBuild, {
-    dereference: true,
-    filter: file => file !== paths.appHtml,
   });
 }

@@ -37,6 +37,8 @@ const clearConsole = require('react-dev-utils/clearConsole');
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
 const paths = require('../config/paths');
 const configFactory = require('../config/webpack.config');
+const copyPublicFolder = require('./utils/copyPublicFolder');
+
 const isInteractive = process.stdout.isTTY;
 
 // Warn and crash if required files are missing
@@ -58,9 +60,11 @@ const config = configFactory('development');
 
 checkBrowsers(paths.appPath, isInteractive)
   .then(() => {
+    // Remove all content but keep the directory so that
+    // if you're in it, you don't end up in Trash
     fs.emptyDirSync(paths.appDist);
     // Merge with the public folder
-    copyPublicFolder();
+    copyPublicFolder(paths.appDist);
   })
   .then(() => {
     const compiler = webpack(config);
@@ -103,10 +107,3 @@ checkBrowsers(paths.appPath, isInteractive)
     }
     process.exit(1);
   });
-
-function copyPublicFolder() {
-  fs.copySync(paths.appPublic, paths.appDist, {
-    dereference: true,
-    filter: file => file !== paths.appHtml,
-  });
-}
