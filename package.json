@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "start": "cd packages/react-scripts && node bin/react-scripts.js start",
+    "build": "cd packages/react-scripts && node bin/react-scripts.js build",
     "test": "cd packages/react-scripts && node bin/react-scripts.js test"
   },
   "devDependencies": {

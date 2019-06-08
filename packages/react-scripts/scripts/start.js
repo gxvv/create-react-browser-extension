@@ -31,7 +31,7 @@ const verifyTypeScriptSetup = require('./utils/verifyTypeScriptSetup');
 verifyTypeScriptSetup();
 // @remove-on-eject-end
 
-const fs = require('fs');
+const fs = require('fs-extra');
 const chalk = require('react-dev-utils/chalk');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
@@ -52,9 +52,9 @@ const useYarn = fs.existsSync(paths.yarnLockFile);
 const isInteractive = process.stdout.isTTY;
 
 // Warn and crash if required files are missing
-if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
-  process.exit(1);
-}
+// if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
+//   process.exit(1);
+// }
 
 // Tools like Cloud9 rely on this.
 const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 3000;
@@ -161,7 +161,12 @@ checkBrowsers(paths.appPath, isInteractive)
     process.exit(1);
   });
 
-checkBrowsers(paths.appPath, isInteractive)
+checkBrowsers(paths.appPath)
+  .then(() => {
+    fs.emptyDirSync(paths.appDist);
+    // Merge with the public folder
+    copyPublicFolder();
+  })
   .then(() => {
     const compiler = webpack(config);
     const watching = compiler.watch(
@@ -200,3 +205,10 @@ checkBrowsers(paths.appPath, isInteractive)
     }
     process.exit(1);
   });
+
+  function copyPublicFolder() {
+    fs.copySync(paths.appPublic, paths.appDist, {
+      dereference: true,
+      filter: file => file !== paths.appHtml,
+    });
+  }
