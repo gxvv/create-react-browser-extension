@@ -2,14 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-chrome.runtime.onInstalled.addListener(function() {
-  chrome.storage.sync.set({color: '#3aa757'}, function() {
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.storage.sync.set({color: '#3aa757'}, () => {
     console.log('The color is green.');
   });
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+
+  chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
     chrome.declarativeContent.onPageChanged.addRules([{
       conditions: [new chrome.declarativeContent.PageStateMatcher({
-        pageUrl: {hostEquals: 'www.baidu.com'},
+        pageUrl: {hostEquals: 'developer.chrome.com'},
       })],
       actions: [new chrome.declarativeContent.ShowPageAction()]
     }]);

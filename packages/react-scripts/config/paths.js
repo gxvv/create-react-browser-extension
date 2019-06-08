@@ -17,8 +17,6 @@ const url = require('url');
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 
-const envPublicUrl = process.env.PUBLIC_URL;
-
 function ensureSlash(inputPath, needsSlash) {
   const hasSlash = inputPath.endsWith('/');
   if (hasSlash && !needsSlash) {
@@ -28,22 +26,6 @@ function ensureSlash(inputPath, needsSlash) {
   } else {
     return inputPath;
   }
-}
-
-const getPublicUrl = appPackageJson =>
-  envPublicUrl || require(appPackageJson).homepage;
-
-// We use `PUBLIC_URL` environment variable or "homepage" field to infer
-// "public path" at which the app is served.
-// Webpack needs to know it to put the right <script> hrefs into HTML even in
-// single-page apps that may serve index.html for nested URLs like /todos/42.
-// We can't use a relative path in HTML because we don't want to load something
-// like /todos/42/static/js/bundle.7289d.js. We have to know the root.
-function getServedPath(appPackageJson) {
-  const publicUrl = getPublicUrl(appPackageJson);
-  const servedUrl =
-    envPublicUrl || (publicUrl ? url.parse(publicUrl).pathname : '/');
-  return ensureSlash(servedUrl, true);
 }
 
 const moduleFileExtensions = [
@@ -81,7 +63,6 @@ module.exports = {
   appDist: resolveApp('dist'),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
-  appOptionsHtml: resolveApp('public/options.html'),
   appPopupJs: resolveModule(resolveApp, 'src/popup'),
   appBackgroundJs: resolveModule(resolveApp, 'src/background'),
   appOptionsJs: resolveModule(resolveApp, 'src/options'),
@@ -92,10 +73,7 @@ module.exports = {
   appJsConfig: resolveApp('jsconfig.json'),
   yarnLockFile: resolveApp('yarn.lock'),
   testsSetup: resolveModule(resolveApp, 'src/setupTests'),
-  proxySetup: resolveApp('src/setupProxy.js'),
   appNodeModules: resolveApp('node_modules'),
-  publicUrl: getPublicUrl(resolveApp('package.json')),
-  servedPath: getServedPath(resolveApp('package.json')),
 };
 
 // @remove-on-eject-begin
@@ -109,7 +87,6 @@ module.exports = {
   appDist: resolveApp('dist'),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
-  appOptionsHtml: resolveApp('public/options.html'),
   appPopupJs: resolveModule(resolveApp, 'src/popup'),
   appBackgroundJs: resolveModule(resolveApp, 'src/background'),
   appOptionsJs: resolveModule(resolveApp, 'src/options'),
@@ -120,10 +97,7 @@ module.exports = {
   appJsConfig: resolveApp('jsconfig.json'),
   yarnLockFile: resolveApp('yarn.lock'),
   testsSetup: resolveModule(resolveApp, 'src/setupTests'),
-  proxySetup: resolveApp('src/setupProxy.js'),
   appNodeModules: resolveApp('node_modules'),
-  publicUrl: getPublicUrl(resolveApp('package.json')),
-  servedPath: getServedPath(resolveApp('package.json')),
   // These properties only exist before ejecting:
   ownPath: resolveOwn('.'),
   ownNodeModules: resolveOwn('node_modules'), // This is empty on npm 3
@@ -149,7 +123,6 @@ if (
     appDist: resolveOwn('../../dist'),
     appPublic: resolveOwn('template/public'),
     appHtml: resolveOwn('template/public/index.html'),
-    appOptionsHtml: resolveOwn('template/public/options.html'),
     appPopupJs: resolveModule(resolveOwn, 'template/src/popup'),
     appBackgroundJs: resolveModule(resolveOwn, 'template/src/background'),
     appOptionsJs: resolveModule(resolveOwn, 'template/src/options'),
@@ -160,10 +133,7 @@ if (
     appJsConfig: resolveOwn('template/jsconfig.json'),
     yarnLockFile: resolveOwn('template/yarn.lock'),
     testsSetup: resolveModule(resolveOwn, 'template/src/setupTests'),
-    proxySetup: resolveOwn('template/src/setupProxy.js'),
     appNodeModules: resolveOwn('node_modules'),
-    publicUrl: getPublicUrl(resolveOwn('package.json')),
-    servedPath: getServedPath(resolveOwn('package.json')),
     // These properties only exist before ejecting:
     ownPath: resolveOwn('.'),
     ownNodeModules: resolveOwn('node_modules'),
