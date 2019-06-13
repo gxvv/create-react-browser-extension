@@ -6,7 +6,7 @@ export default class AppOptions extends React.Component {
   handleButtonClick(item) {
     chrome.storage.sync.set({color: item}, function() {
       console.log('color is ' + item);
-    })
+    });
   }
 
   render() {

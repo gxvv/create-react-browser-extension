@@ -129,8 +129,8 @@ module.exports = function(webpackEnv, vendor) {
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
     entry: {
-      popup: paths.appPopupJs,
-      options: paths.appOptionsJs,
+      popup: [paths.appPopupJs].filter(Boolean),
+      options: [paths.appOptionsJs].filter(Boolean),
       background: paths.appBackgroundJs,
     },
     output: {
@@ -138,8 +138,7 @@ module.exports = function(webpackEnv, vendor) {
       path: (isEnvProduction ? paths.appBuild : paths.appDev) + ('/' + vendor),
       // Add /* filename */ comments to generated require()s in the output.
       pathinfo: isEnvDevelopment,
-      // There will be one main bundle, and one file per asynchronous chunk.
-      // In development, it does not produce real files.
+      // There will be one main bundle.
       filename: 'static/js/[name].js',
       // TODO: remove this when upgrading to webpack 5
       futureEmitAssets: true,
@@ -570,9 +569,12 @@ module.exports = function(webpackEnv, vendor) {
       new ManifestPlugin({
         fileName: 'manifest.json',
         publicPath: publicPath,
-        seed: require(paths.appManifestJson),
-        generate: seed => {
-          const manifest = manifestUtils.transformVendorKeys(seed, vendor);
+        generate: () => {
+          const manifestJson = require(paths.appManifestJson);
+          const manifest = manifestUtils.transformVendorKeys(
+            manifestJson,
+            vendor
+          );
 
           manifestUtils.validate(manifest);
 

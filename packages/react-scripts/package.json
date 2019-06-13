@@ -39,7 +39,6 @@
     "babel-preset-react-app": "^9.0.0",
     "camelcase": "^5.2.0",
     "case-sensitive-paths-webpack-plugin": "2.2.0",
-    "copy-webpack-plugin": "^5.0.3",
     "css-loader": "2.1.1",
     "dotenv": "6.2.0",
     "dotenv-expand": "4.2.0",
@@ -79,12 +78,12 @@
     "url-loader": "1.1.2",
     "webpack": "4.29.6",
     "webpack-manifest-plugin": "2.0.4",
+    "webpack-webextension-plugin": "^0.2.0",
     "workbox-webpack-plugin": "4.2.0"
   },
   "devDependencies": {
     "react": "^16.8.4",
-    "react-dom": "^16.8.4",
-    "webpack-webextension-plugin": "^0.2.0"
+    "react-dom": "^16.8.4"
   },
   "optionalDependencies": {
     "fsevents": "2.0.6"
