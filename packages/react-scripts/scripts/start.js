@@ -7,7 +7,6 @@
  */
 // @remove-on-eject-end
 'use strict';
-
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = 'development';
 process.env.NODE_ENV = 'development';
@@ -56,17 +55,17 @@ if (
 // We require that you explicitly set browsers and do not fall back to
 // browserslist defaults.
 const { checkBrowsers } = require('react-dev-utils/browsersHelper');
-const config = configFactory('development');
 
 checkBrowsers(paths.appPath, isInteractive)
   .then(() => {
     // Remove all content but keep the directory so that
     // if you're in it, you don't end up in Trash
-    fs.emptyDirSync(paths.appDist);
+    fs.emptyDirSync(paths.appDev);
     // Merge with the public folder
-    copyPublicFolder(paths.appDist);
+    copyPublicFolder(paths.appDev);
   })
   .then(() => {
+    const config = configFactory('development');
     const compiler = webpack(config);
     const watching = compiler.watch(
       {

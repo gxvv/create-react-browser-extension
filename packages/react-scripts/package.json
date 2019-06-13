@@ -1,10 +1,10 @@
 {
-  "name": "react-webextension-scripts",
+  "name": "browser-extension-react-scripts",
   "version": "0.1.0",
-  "description": "Configuration and scripts for Create React App.",
+  "description": "Configuration and scripts for Create React Browser Extension.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/facebook/create-react-app.git",
+    "url": "https://github.com/gxvv/create-react-browser-extension",
     "directory": "packages/react-scripts"
   },
   "license": "MIT",
@@ -12,7 +12,7 @@
     "node": ">=8.10"
   },
   "bugs": {
-    "url": "https://github.com/facebook/create-react-app/issues"
+    "url": "https://github.com/gxvv/create-react-browser-extension/issues"
   },
   "files": [
     "bin",
@@ -82,7 +82,8 @@
   },
   "devDependencies": {
     "react": "^16.8.4",
-    "react-dom": "^16.8.4"
+    "react-dom": "^16.8.4",
+    "webpack-webextension-plugin": "^0.2.0"
   },
   "optionalDependencies": {
     "fsevents": "2.0.6"
