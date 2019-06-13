@@ -21,6 +21,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const safePostCssParser = require('postcss-safe-parser');
 const ManifestPlugin = require('webpack-manifest-plugin');
+const manifestUtils = require('webpack-webextension-plugin/manifest-utils');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
@@ -50,7 +51,7 @@ const sassModuleRegex = /\.module\.(scss|sass)$/;
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
-module.exports = function(webpackEnv) {
+module.exports = function(webpackEnv, vendor) {
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
 
@@ -134,7 +135,7 @@ module.exports = function(webpackEnv) {
     },
     output: {
       // The build folder.
-      path: isEnvProduction ? paths.appBuild : paths.appDev,
+      path: (isEnvProduction ? paths.appBuild : paths.appDev) + ('/' + vendor),
       // Add /* filename */ comments to generated require()s in the output.
       pathinfo: isEnvDevelopment,
       // There will be one main bundle, and one file per asynchronous chunk.
@@ -570,7 +571,13 @@ module.exports = function(webpackEnv) {
         fileName: 'manifest.json',
         publicPath: publicPath,
         seed: require(paths.appManifestJson),
-        generate: seed => seed,
+        generate: seed => {
+          const manifest = manifestUtils.transformVendorKeys(seed, vendor);
+
+          manifestUtils.validate(manifest);
+
+          return manifest;
+        },
       }),
       // Moment.js is an extremely popular library that bundles large locale files
       // by default due to how Webpack interprets its code. This is a practical
