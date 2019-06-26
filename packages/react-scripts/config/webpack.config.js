@@ -22,6 +22,7 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const safePostCssParser = require('postcss-safe-parser');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const manifestUtils = require('webpack-webextension-plugin/manifest-utils');
+const WebextensionPlugin = require('webpack-webextension-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
@@ -129,8 +130,16 @@ module.exports = function(webpackEnv, vendor) {
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
     entry: {
-      popup: [paths.appPopupJs].filter(Boolean),
-      options: [paths.appOptionsJs].filter(Boolean),
+      popup: [
+        paths.appPopupJs,
+        isEnvDevelopment &&
+          require.resolve('webpack-webextension-plugin/client'),
+      ].filter(Boolean),
+      options: [
+        paths.appOptionsJs,
+        isEnvDevelopment &&
+          require.resolve('webpack-webextension-plugin/client'),
+      ].filter(Boolean),
       background: paths.appBackgroundJs,
     },
     output: {
@@ -563,24 +572,11 @@ module.exports = function(webpackEnv, vendor) {
           // both options are optional
           filename: 'static/css/[name].css',
         }),
-      // Generate a manifest file which contains a mapping of all asset filenames
-      // to their corresponding output file so that tools can pick it up without
-      // having to parse `index.html`.
-      new ManifestPlugin({
-        fileName: 'manifest.json',
-        publicPath: publicPath,
-        generate: () => {
-          const manifestJson = require(paths.appManifestJson);
-          const manifest = manifestUtils.transformVendorKeys(
-            manifestJson,
-            vendor
-          );
-
-          manifestUtils.validate(manifest);
-
-          return manifest;
-        },
-      }),
+      isEnvDevelopment &&
+        new WebextensionPlugin({
+          vendor,
+          manifestDefaults: require(paths.appManifestJson),
+        }),
       // Moment.js is an extremely popular library that bundles large locale files
       // by default due to how Webpack interprets its code. This is a practical
       // solution that requires the user to opt into importing specific locales.
