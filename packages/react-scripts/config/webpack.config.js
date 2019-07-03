@@ -591,14 +591,14 @@ module.exports = function(webpackEnv, vendor) {
           // both options are optional
           filename: 'static/css/[name].css',
         }),
-      // Add webextension polyfill
+      // Add webextension polyfill for chrome and opera
       ['chrome', 'opera'].includes(vendor) &&
         new webpack.ProvidePlugin({
           browser: 'webextension-polyfill',
         }),
+      // Copy public folder
       new CopyPlugin([
         {
-          // Copy all files except (.js, .json, _locales)
           context: paths.appPublic,
           from: path.resolve(paths.appPublic, '**/*'),
           ignore: ['**/*.js', '**/*.json', 'index.html'],
@@ -606,11 +606,12 @@ module.exports = function(webpackEnv, vendor) {
             (isEnvProduction ? paths.appBuild : paths.appDev) + ('/' + vendor),
         },
       ]),
-
-      isEnvDevelopment &&
-        new WebextensionPlugin({
-          vendor,
-        }),
+      // Starting livereload server and listening the manifest.\
+      new WebextensionPlugin({
+        vendor,
+        autoreload: isEnvDevelopment,
+      }),
+      // Generate packed file
       isEnvProduction &&
         new ZipPlugin({
           path: paths.appBuild,
