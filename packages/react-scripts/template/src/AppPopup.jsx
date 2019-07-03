@@ -11,21 +11,30 @@ export default class AppPopup extends React.Component {
   }
 
   componentDidMount() {
-    chrome.storage.sync.get('color', data => {
-      this.setState({
-        color: data.color
-      });
+    this.initColor();
+  }
+
+  initColor = async () => {
+    const data = await browser.storage.sync.get('color');
+
+    this.setState({
+      color: data.color
     });
   }
 
-  handleButtonClick = () => {
+  handleButtonClick = async () => {
     const { color } = this.state;
-
-    chrome.tabs.query({active: true, currentWindow: true}, tabs => {
-      chrome.tabs.executeScript(
-          tabs[0].id,
-          {code: 'document.body.style.backgroundColor = "' + color + '";'});
+    const tabs = await browser.tabs.query({
+      active: true,
+      currentWindow: true
     });
+
+    browser.tabs.executeScript(
+      tabs[0].id,
+      {
+        code: 'document.body.style.backgroundColor = "' + color + '";'
+      }
+    );
   }
 
   render() {
