@@ -20,8 +20,8 @@ const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const safePostCssParser = require('postcss-safe-parser');
-const ManifestPlugin = require('webpack-manifest-plugin');
-const manifestUtils = require('webpack-webextension-plugin/manifest-utils');
+const CopyPlugin = require('copy-webpack-plugin');
+const ZipPlugin = require('zip-webpack-plugin');
 const WebextensionPlugin = require('webpack-webextension-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
@@ -49,6 +49,13 @@ const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
+
+// Get some defaults
+const { version, name, description } = require(paths.appManifestJson);
+const EXT_ZIP_TYPE_MAP = {
+  firefox: 'xpi',
+  opera: 'crx',
+};
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
@@ -486,6 +493,18 @@ module.exports = function(webpackEnv, vendor) {
             // Make sure to add the new loader(s) before the "file" loader.
           ],
         },
+        // The webextension-polyill doesn't work well with webpacks ProvidePlugin.
+        // Solution from: https://github.com/webextension-toolbox/webextension-toolbox
+        // More info: https://github.com/mozilla/webextension-polyfill/pull/86
+        {
+          test: /webextension-polyfill[\\/]+dist[\\/]+browser-polyfill\.js$/,
+          loader: require.resolve('string-replace-loader'),
+          query: {
+            search: 'typeof browser === "undefined"',
+            replace:
+              'typeof window.browser === "undefined" || Object.getPrototypeOf(window.browser) !== Object.prototype',
+          },
+        },
       ],
     },
     plugins: [
@@ -572,10 +591,31 @@ module.exports = function(webpackEnv, vendor) {
           // both options are optional
           filename: 'static/css/[name].css',
         }),
+      // Add webextension polyfill
+      ['chrome', 'opera'].includes(vendor) &&
+        new webpack.ProvidePlugin({
+          browser: 'webextension-polyfill',
+        }),
+      new CopyPlugin([
+        {
+          // Copy all files except (.js, .json, _locales)
+          context: paths.appPublic,
+          from: path.resolve(paths.appPublic, '**/*'),
+          ignore: ['**/*.js', '**/*.json', 'index.html'],
+          to:
+            (isEnvProduction ? paths.appBuild : paths.appDev) + ('/' + vendor),
+        },
+      ]),
+
       isEnvDevelopment &&
         new WebextensionPlugin({
           vendor,
-          manifestDefaults: require(paths.appManifestJson),
+        }),
+      isEnvProduction &&
+        new ZipPlugin({
+          path: paths.appBuild,
+          filename: `${name}.v${version}.${vendor}.${EXT_ZIP_TYPE_MAP[vendor] ||
+            'zip'}`,
         }),
       // Moment.js is an extremely popular library that bundles large locale files
       // by default due to how Webpack interprets its code. This is a practical
