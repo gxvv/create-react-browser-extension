@@ -11,7 +11,7 @@
 process.env.BABEL_ENV = 'development';
 process.env.NODE_ENV = 'development';
 const args = process.argv.slice(2);
-const [vendor = ''] = args;
+const [vendor = 'chrome'] = args;
 
 // Makes the script crash on unhandled rejections instead of silently
 // ignoring them. In the future, promise rejections that are not handled will
@@ -38,7 +38,6 @@ const clearConsole = require('react-dev-utils/clearConsole');
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
 const paths = require('../config/paths');
 const configFactory = require('../config/webpack.config');
-const copyPublicFolder = require('./utils/copyPublicFolder');
 
 const isInteractive = process.stdout.isTTY;
 
@@ -64,8 +63,6 @@ checkBrowsers(paths.appPath, isInteractive)
     // Remove all content but keep the directory so that
     // if you're in it, you don't end up in Trash
     fs.emptyDirSync(vendorFolder);
-    // Merge with the public folder
-    copyPublicFolder(vendorFolder);
   })
   .then(() => {
     const config = configFactory('development', vendor);
