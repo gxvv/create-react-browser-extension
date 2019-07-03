@@ -53,9 +53,12 @@ function tryGitInit(appPath) {
     didInit = true;
 
     execSync('git add -A', { stdio: 'ignore' });
-    execSync('git commit -m "Initial commit from Create React App"', {
-      stdio: 'ignore',
-    });
+    execSync(
+      'git commit -m "Initial commit from Create React Browser Extension"',
+      {
+        stdio: 'ignore',
+      }
+    );
     return true;
   } catch (e) {
     if (didInit) {
