@@ -56,6 +56,18 @@ const WARN_AFTER_CHUNK_GZIP_SIZE = 1024 * 1024;
 
 const isInteractive = process.stdout.isTTY;
 
+// Warn and crash if vendor is not supported
+if (!['chrome', 'firefox', 'opera', 'edge'].find(e => e === vendor)) {
+  console.log();
+  console.log(
+    chalk.yellow(
+      'Unsupported Browser! Vendor must be one of chrome/firefox/opera/edge.'
+    )
+  );
+  console.log();
+  process.exit(1);
+}
+
 // Warn and crash if required files are missing
 if (
   !checkRequiredFiles([

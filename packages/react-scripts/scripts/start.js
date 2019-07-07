@@ -34,12 +34,25 @@ verifyTypeScriptSetup();
 
 const fs = require('fs-extra');
 const webpack = require('webpack');
+const chalk = require('react-dev-utils/chalk');
 const clearConsole = require('react-dev-utils/clearConsole');
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
 const paths = require('../config/paths');
 const configFactory = require('../config/webpack.config');
 
 const isInteractive = process.stdout.isTTY;
+
+// Warn and crash if vendor is not supported
+if (!['chrome', 'firefox', 'opera', 'edge'].find(e => e === vendor)) {
+  console.log();
+  console.log(
+    chalk.yellow(
+      'Unsupported Browser! Vendor must be one of chrome/firefox/opera/edge.'
+    )
+  );
+  console.log();
+  process.exit(1);
+}
 
 // Warn and crash if required files are missing
 if (
@@ -78,7 +91,7 @@ checkBrowsers(paths.appPath, isInteractive)
           return console.log(err);
         }
         if (isInteractive) {
-          // clearConsole();
+          clearConsole();
         }
         // Print watch/build result here...
         const outputOptions = {
