@@ -228,13 +228,14 @@ module.exports = function(
   console.log(`Success! Created ${appName} at ${appPath}`);
   console.log('Inside that directory, you can run several commands:');
   console.log();
-  console.log(chalk.cyan(`  ${displayedCommand} start`));
-  console.log('    Starts the development server.');
+  console.log(chalk.cyan(`  ${displayedCommand} start [vendor]`));
+  console.log('    Starts the development compiler and livereload server.');
+  console.log('    Vendor can be one of chrome/firefox/...');
   console.log();
   console.log(
-    chalk.cyan(`  ${displayedCommand} ${useYarn ? '' : 'run '}build`)
+    chalk.cyan(`  ${displayedCommand} ${useYarn ? '' : 'run '}build [vendor]`)
   );
-  console.log('    Bundles the app into static files for production.');
+  console.log('    Bundles the app into static files for distribution.');
   console.log();
   console.log(chalk.cyan(`  ${displayedCommand} test`));
   console.log('    Starts the test runner.');
@@ -263,6 +264,10 @@ module.exports = function(
   }
   console.log();
   console.log('Happy hacking!');
+  console.log(
+    'Visiting home page for more information. https://github.com/gxvv/create-react-browser-extension'
+  );
+  console.log();
 };
 
 function isReactInstalled(appPackage) {
