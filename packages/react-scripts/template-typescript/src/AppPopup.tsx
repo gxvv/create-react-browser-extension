@@ -1,8 +1,8 @@
 import React from 'react';
 import './AppPopup.css';
 
-export default class AppPopup extends React.Component {
-  constructor(props) {
+export default class AppPopup extends React.Component<any, any> {
+  constructor(props: any) {
     super(props);
 
     this.state = {

@@ -2,6 +2,8 @@
 /// <reference types="react" />
 /// <reference types="react-dom" />
 
+declare const browser: any;
+
 declare namespace NodeJS {
   interface ProcessEnv {
     readonly NODE_ENV: 'development' | 'production' | 'test';

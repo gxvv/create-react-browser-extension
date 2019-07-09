@@ -107,6 +107,10 @@ module.exports = function(
   // Setup the eslint config
   appPackage.eslintConfig = {
     extends: 'react-app',
+    env: {
+      browser: true,
+      webextensions: true,
+    },
   };
 
   // Setup the browsers list
