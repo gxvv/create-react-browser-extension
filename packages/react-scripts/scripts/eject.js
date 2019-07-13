@@ -239,6 +239,10 @@ inquirer
     console.log(`  Adding ${cyan('ESLint')} configuration`);
     appPackage.eslintConfig = {
       extends: 'react-app',
+      env: {
+        browser: true,
+        webextensions: true,
+      },
     };
 
     fs.writeFileSync(
