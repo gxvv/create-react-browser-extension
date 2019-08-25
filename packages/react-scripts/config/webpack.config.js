@@ -9,6 +9,7 @@
 'use strict';
 
 const fs = require('fs');
+const glob = require('glob');
 const isWsl = require('is-wsl');
 const path = require('path');
 const webpack = require('webpack');
@@ -124,6 +125,16 @@ module.exports = function(webpackEnv, vendor) {
     }
     return loaders;
   };
+  
+  const contentScripts = glob.sync(paths.appContentScript + '/**/*.{js,ts}').reduce(function(prev, next) {
+    Object.assign(prev, {
+      ['content-script-' + path.basename(next, path.extname(next))]: next,
+    });
+
+    return prev;
+  }, {});
+
+  console.log(contentScripts);
 
   return {
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
@@ -148,6 +159,7 @@ module.exports = function(webpackEnv, vendor) {
           require.resolve('webpack-webextension-plugin/client'),
       ].filter(Boolean),
       background: paths.appBackgroundJs,
+      ...contentScripts
     },
     output: {
       // The build folder.
